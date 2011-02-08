@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 
+
 from Crypto.Cipher import AES
 import base64
 import os
+
+# ENTRY_ATTRIBS is a dictionary of attribute name and its description
+ENTRY_ATTRIBS = {'name': 'Name', 'url': 'URL', 'UserName': 'User Name',
+    'password': 'Password', 'note': 'Note'}
 
 ### Encryption Stuff
 # the block size for the cipher object; must be 16, 24, or 32 for AES
 BLOCK_SIZE = 32
 
 # the character used for padding--with a block cipher such as AES, the value
-# you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
+# you encrypt must be a multiple of BLOCK_SIZE in length.    This character is
 # used to ensure that your value is always a multiple of BLOCK_SIZE
 PADDING = '{'
 
@@ -30,36 +35,52 @@ secret = os.urandom(BLOCK_SIZE)
 cipher = AES.new(secret)
 #### Encryption Stuff
 
-class Node:
-  """Account data container"""
-  def __init__(self):
-    self.system = ''
-    self.url = ''
-    self.UserName = ''
-    self.password = ''
-    self.note = ''
-  def __str__(self):
-    message = "System: " + self.system + "\n"
-    message = message + "URL: " + self.url + "\n"
-    message = message + "UserName: " + self.UserName + "\n"
-    message = message + "Password: " + self.password + "\n"
-    message = message + "Note: " + self.note
-    return message
+class Entry:
+    """Account data container"""
+    def __init__(self,name):
+        for attrib = keys(ENTRY_ATTRIBS):
+            self.attrib = ''
+        self.name = name
+        self.url = ''
+        self.UserName = ''
+        self.password = ''
+        self.note = ''
+    def __str__(self):
+        for attrib
+        message = "System: " + self.name + "\n" \
+            "URL: " + self.url + "\n" \
+            "UserName: " + self.UserName + "\n" \
+            "Password: " + self.password + "\n" \
+            "Note: " + self.note
+        return message
+    def edit_entry(self):
+        print "Editing: " + self.name + "\n" \
+        for i in range(len(
 
-class Tree:
-  def __init__(self):
-    self.nodes = {}
+class Folder:
+    def __init__(self,name):
+        self.name = name
+        self.nodes = {}  # Can be Entry or Folder
+    def __str__(self):
+        message = "Branch Name: " + self.name + "\n" \
+            "Nodes: "
+        for node in self.nodes:
+            message += node.name + ","
+        return message
+
+
+
 
 # Enter the string to encode
-data = raw_input('Enter string to be encoded: ')
+#data = raw_input('Enter string to be encoded: ')
 
 
 # encode a string
-encoded = EncodeAES(cipher, data)
-print 'Encrypted string:', encoded
+#encoded = EncodeAES(cipher, data)
+#print 'Encrypted string:', encoded
 
 # decode the encoded string
-decoded = DecodeAES(cipher, encoded)
-print 'Decrypted string:', decoded
+#decoded = DecodeAES(cipher, encoded)
+#print 'Decrypted string:', decoded
 
 #print "Enter data to be encrypted"
