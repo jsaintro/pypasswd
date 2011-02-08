@@ -5,9 +5,11 @@ from Crypto.Cipher import AES
 import base64
 import os
 
-# ENTRY_ATTRIBS is a dictionary of attribute name and its description
-ENTRY_ATTRIBS = {'name': 'Name', 'url': 'URL', 'UserName': 'User Name',
-    'password': 'Password', 'note': 'Note'}
+# ENTRY_ATTRIBS is a list of tupples.
+# each tupple contains the attribute name and it's description
+ENTRY_ATTRIBS = [('name', 'Name'), ('url', 'URL'), 
+    ('UserName', 'User Name'), ('password','Password'),
+    ('note','Note'), ('test','Test')]
 
 ### Encryption Stuff
 # the block size for the cipher object; must be 16, 24, or 32 for AES
@@ -38,25 +40,29 @@ cipher = AES.new(secret)
 class Entry:
     """Account data container"""
     def __init__(self,name):
-        for attrib = keys(ENTRY_ATTRIBS):
-            self.attrib = ''
+        for i in range(len(ENTRY_ATTRIBS)):
+            setattr(self, ENTRY_ATTRIBS[i][0], '')
+        # Populate the name with the real value
         self.name = name
-        self.url = ''
-        self.UserName = ''
-        self.password = ''
-        self.note = ''
     def __str__(self):
-        for attrib
-        message = "System: " + self.name + "\n" \
-            "URL: " + self.url + "\n" \
-            "UserName: " + self.UserName + "\n" \
-            "Password: " + self.password + "\n" \
-            "Note: " + self.note
+        message = ''
+        for i in range(len(ENTRY_ATTRIBS)):
+            (attrib,desc,value) = self.fetch_attr(i)
+            message += attrib + ": " + value + "\n"
         return message
+    def fetch_attr(self,i):
+        attrib = ENTRY_ATTRIBS[i][0]
+        desc = ENTRY_ATTRIBS[i][1]
+        value = getattr(self, attrib)
+        return (attrib,desc,value)
     def edit_entry(self):
-        print "Editing: " + self.name + "\n" \
-        for i in range(len(
-
+        print "Editing: " + self.name + "\n"
+        for i in range(len(ENTRY_ATTRIBS)):
+            (attrib,desc,value) = self.fetch_attr(i)
+            print str(i) + " " + desc + ": " + value
+        choice = input("Enter number to edit: ")
+        setattr(self, ENTRY_ATTRIBS[choice][0],
+            raw_input(ENTRY_ATTRIBS[choice][1] + ": "))
 class Folder:
     def __init__(self,name):
         self.name = name
