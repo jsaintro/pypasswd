@@ -1,11 +1,34 @@
 #!/usr/bin/env python
 
+import traceback
 
 # ENTRY_ATTRIBS is a list of tupples.
 # each tupple contains the attribute name and it's description
 ENTRY_ATTRIBS = [('name', 'Name'), ('url', 'URL'),
     ('UserName', 'User Name'), ('password', 'Password'),
     ('note', 'Note'), ('test', 'Test')]
+
+DEFAULTFILE = 'pypasswd.pyp'
+class PYPMain:
+    """Main Application class"""
+    def __init__(self):
+        self.file = DEFAULTFILE
+        self.pyproot = Folder('Root')
+        
+    def newfolder(self):
+        foldername = raw_input("Enter new folder name: ")
+        f = Folder(foldername)
+        self.pyproot.add_node(f)
+
+    def newentry(self):
+        entryname = raw_input("Enter new entry name: ")
+        e = Entry(entryname)
+        print "Editing: " + e.name + "\n"
+        for i in range(len(ENTRY_ATTRIBS)):
+            (attrib, desc, value) = e.fetch_attr(i)
+            value = raw_input("Enter " + desc + ": ")
+            setattr(e, ENTRY_ATTRIBS[i][0], value)
+        return self
 
 
 class Entry:
@@ -58,10 +81,30 @@ class Folder:
         for node in self.nodes:
             print node.name
 
+def main():
 
-#### Testing stuff
-e1 = Entry('e1')
-e2 = Entry('e2')
-f1 = Folder('f1')
-f2 = Folder('f2')
-#### Testing stuff
+    appmain = PYPMain()
+
+    while True:
+        # Display the folder index
+        appmain.pyproot.findex()
+        # print the command key
+        print "f: folder e: entry q:quit"
+        # read line for command
+        c = raw_input("Enter Command: ")
+        # execute the command
+        if c == 'q':
+            break
+        elif c == 'f':
+            appmain.newfolder()
+        elif c == 'e':
+            appmain.newentry()
+
+if __name__ =='__main__':
+    # execute main or fail nicely
+    try:
+        main()
+    except:
+        # print error message
+        traceback.print_exc()
+
