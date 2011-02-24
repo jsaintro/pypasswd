@@ -6,7 +6,7 @@ import traceback
 # each tupple contains the attribute name and it's description
 ENTRY_ATTRIBS = [('name', 'Name'), ('url', 'URL'),
     ('UserName', 'User Name'), ('password', 'Password'),
-    ('note', 'Note'), ('test', 'Test')]
+    ('note', 'Note')]
 
 DEFAULTFILE = 'pypasswd.pyp'
 class PYPMain:
@@ -14,11 +14,24 @@ class PYPMain:
     def __init__(self):
         self.file = DEFAULTFILE
         self.pyproot = Folder('Root')
+        # Set our initial current position to root
+        self.pypcurr = self.pyproot
+        #### Test stuff
+        self.pyproot.add_node(Folder('f1'))
+        self.pyproot.add_node(Folder('f2'))
+        self.pyproot.add_node(Entry('e1'))
+        #### Test stuff
         
+    def whichobj(self, nodeobj):
+        if isinstance(nodeobj, Entry):
+            return 'e'
+        else:
+            return 'f'
+
     def newfolder(self):
         foldername = raw_input("Enter new folder name: ")
         f = Folder(foldername)
-        self.pyproot.add_node(f)
+        self.pypcurr.add_node(f)
 
     def newentry(self):
         entryname = raw_input("Enter new entry name: ")
@@ -28,8 +41,16 @@ class PYPMain:
             (attrib, desc, value) = e.fetch_attr(i)
             value = raw_input("Enter " + desc + ": ")
             setattr(e, ENTRY_ATTRIBS[i][0], value)
-        return self
+        self.pypcurr.add_node(e)
 
+    def selectfolder(self, folder):
+        self.pypcurr = folder
+
+    def index(self):
+        i = 1
+        for node in self.pyproot.nodes:
+            print "%d %s %s" % (i, self.whichobj(node), node.name)
+            i += 1
 
 class Entry:
     """Account data container"""
@@ -59,13 +80,14 @@ class Entry:
             print str(i) + " " + desc + ": " + value
         choice = input("Enter number to edit: ")
         setattr(self, ENTRY_ATTRIBS[choice][0],
-            raw_input(ENTRY_ATTRIBS[choice][1] + ": "))
+            raw_input(EfNTRY_ATTRIBS[choice][1] + ": "))
 
 
 class Folder:
     def __init__(self, name):
         self.name = name
         self.nodes = []  # List of nodes.  Can be Entry or Folder
+        self.isopen = False
 
     def __str__(self):
         message = "Branch Name: " + self.name + "\n" \
@@ -77,19 +99,15 @@ class Folder:
     def add_node(self, nodeobj):
         self.nodes.append(nodeobj)
         
-    def findex(self):
-        for node in self.nodes:
-            print node.name
-
 def main():
 
     appmain = PYPMain()
 
     while True:
         # Display the folder index
-        appmain.pyproot.findex()
+        appmain.index()
         # print the command key
-        print "f: folder e: entry q:quit"
+        print "f: new folder e: new entry q:quit"
         # read line for command
         c = raw_input("Enter Command: ")
         # execute the command
