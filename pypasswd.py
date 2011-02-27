@@ -43,13 +43,26 @@ class PYPMain:
             setattr(e, ENTRY_ATTRIBS[i][0], value)
         self.pypcurr.add_node(e)
 
-    def selectfolder(self, folder):
-        self.pypcurr = folder
+    def selectfolder(self):
+        fnum = raw_input('Select active folder number: ').split('.')
+        node = self.pyproot
+        for num in fnum:
+            node = node.nodes[int(num) - 1]
+        self.pypcurr = node
 
-    def index(self):
+    def index(self, nodes, level = 0):
         i = 1
-        for node in self.pyproot.nodes:
-            print "%d %s %s" % (i, self.whichobj(node), node.name)
+        for node in nodes:
+            # Calculate level spacing
+            lspc = ' ' * level
+            if node == self.pypcurr:
+                print "%s %d *%s %s" % (lspc, i, self.whichobj(node), node.name)
+            else:
+                print "%s %d %s %s" % (lspc, i, self.whichobj(node), node.name)
+            # Redursively display nodes
+            if self.whichobj(node) == 'f':
+                if len(node.nodes):
+                    self.index(node.nodes, level + 1)
             i += 1
 
 class Entry:
@@ -105,9 +118,9 @@ def main():
 
     while True:
         # Display the folder index
-        appmain.index()
+        appmain.index(appmain.pyproot.nodes)
         # print the command key
-        print "f: new folder e: new entry q:quit"
+        print "f: new folder e: new entry sf: select folder q:quit"
         # read line for command
         c = raw_input("Enter Command: ")
         # execute the command
@@ -117,6 +130,8 @@ def main():
             appmain.newfolder()
         elif c == 'e':
             appmain.newentry()
+        elif c == 'sf':
+            appmain.selectfolder()
 
 if __name__ =='__main__':
     # execute main or fail nicely
