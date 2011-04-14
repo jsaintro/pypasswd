@@ -53,12 +53,16 @@ class PYPMain:
     def index(self, nodes, level = 0):
         i = 1
         for node in nodes:
-            # Calculate level spacing
-            lspc = ' ' * level
+            # Build the initial line
+            line = str(i) + ' ' + self.whichobj(node) + ' ' + node.name
+            # Add level spacing
+            line += ' ' * level
+            # Add selected brackets
             if node == self.pypcurr:
-                print "%s %d *%s %s" % (lspc, i, self.whichobj(node), node.name)
-            else:
-                print "%s %d %s %s" % (lspc, i, self.whichobj(node), node.name)
+                line = '[' + line + ']'
+
+            #print "%s%d %s%s %s" % (lspc, i, pointer, self.whichobj(node), node.name)
+            print line
             # Redursively display nodes
             if self.whichobj(node) == 'f':
                 if len(node.nodes):
